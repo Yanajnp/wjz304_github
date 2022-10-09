@@ -1,4 +1,45 @@
-请输入esata接口配置 esataportcfg(十六进制数). <sup>[④]()</sup> 默认: 无  
+# Redpill_CustomBuild
+[![](https://img.shields.io/github/issues-search?label=%E5%AE%9A%E5%88%B6%E6%AC%A1%E6%95%B0&query=repo%3Awjz304%2FRedpill_CustomBuild%20label%3Acustom)](https://github.com/wjz304/Redpill_CustomBuild/issues?q=label%3Acustom)
+[![](https://img.shields.io/github/issues-search?label=%E6%AF%8F%E6%97%A5%E6%9E%84%E5%BB%BA&query=repo%3Awjz304%2FRedpill_CustomBuild%20label%3Aschedule)](https://github.com/wjz304/Redpill_CustomBuild/issues?q=label%3Aschedule)  
+
+## 介绍  
+[Redpill_CustomBuild](https://github.com/wjz304/Redpill_CustomBuild)  
+一个自定义配置及驱动并通过 Github Action 编译 DSM redpill 引导的平台.  
+本库并没有实际的技术创新, 仅做了一个参数适配, 使一些定制更简单, 并把过程搬到线上, 依赖微软强大的服务器使其快速得到想要的引导文件.  
+高度依赖以下大佬的项目, 请给以下各位大佬点赞.
+>源码仓库： [@RedPill-TTG](https://github.com/RedPill-TTG/redpill-load)  
+>编译来源： [@pocopico](https://github.com/pocopico/redpill-load) [@jumkey](https://github.com/jumkey/redpill-load)  
+>驱动来源： [@pocopico](https://github.com/pocopico/rp-ext)  
+
+> 😎 为什么用 GitHub Action？  
+> 托管于 GitHub 服务器, 只要 GitHub 不宕机, 它就不受影响(Private 项目每月有 2000 次的限制, Public 项目无限制).
+
+## 链接
+***如果没有魔法，请参考 https://github.com/wjz304/hosts 设置hosts***  
+***请使用 Chromium 内核浏览器 (Chrome / Edge / 360极速 ...)***  
+[【👉快速创建】](https://wjz304.github.io/Redpill_CustomBuild/Issues.html)  
+[【👉快速创建】(dev)](https://wjz304.github.io/Redpill_CustomBuild/Issues.html?dev=1)  
+`普通模式默认使用pocopico的驱动库, dev模式默认使用我fork的驱动库(如果报 Checksum 错, 请尝试使用(dev)模式), `  
+`并发较多时, 有概率出现curl错误或者 未触发编译的情况, 过几分钟再试...`  
+
+
+## 使用  
+在本项目 Issues 中创建问题(符合下述规范), 按需填写即可发起定制构建[【👉图文说明】](https://github.com/wjz304/Redpill_CustomBuild/blob/main/guide/Issues.md) [【👉注意事项】](https://github.com/wjz304/Redpill_CustomBuild/blob/main/tips.md).  
+
+### Issue title:
+标题请以 custom 开头(不区分大小写), 且不要包含'(单引号),"(双引号) 等转义字符.
+### Issue body:
+内容 以json格式编写(切记符号为英文符号, [【👉JSON检测】](https://json-online.com/check/))
+
+参数             | 必选 |     默认值     | 说明  
+-----------------|------|----------------|---------  
+platform         | √    |"DS3622xs+"     | 请选择你需要编译的型号. "DS918+", "DS920+", "DS1621+", "DS2422+", "DS3615xs", "DS3617xs", "DS3622xs+", "DVA1622", "DVA3221","RS4021xs+"  
+version          | √    |"7.0.1-42218"   | 请选择你需要编译的版本. "7.1.1-42962", "7.1.0-42661", "7.0.1-42218", "6.2.4-25556"  
+config           | ×    |-               | 如不了解请保持默认, 设置默认 user_config.json <sup>[①]()</sup>
+maxdisks         | ×    |-               | 如不了解请保持默认, 请输入最大硬盘数 maxdisks. 默认: 无, 范围: 1~32  
+maxlanport       | ×    |7               | 如不了解请保持默认, 请输入最大网卡索引 maxlanport. 默认: 7, 范围: 0~31  
+internalportcfg  | ×    |"0xffff"        | 如不了解请保持默认, 请输入sata接口配置 internalportcfg(十六进制数). <sup>[④]()</sup> 默认: 0xffff  
+esataportcfg     | ×    |-               | 如不了解请保持默认, 请输入esata接口配置 esataportcfg(十六进制数). <sup>[④]()</sup> 默认: 无  
 usbportcfg       | ×    |-               | 如不了解请保持默认, 请输入usb接口配置 usbportcfg(十六进制数). <sup>[④]()</sup> 默认: 无  
 ~sn~             | ×    |-               | ~序列号. 默认根据型号随机生成.~ <sup>[②]()</sup>  
 ~mac~            | ×    |-               | ~MAC地址. 多个请以 "," 间隔. 默认根据型号随机生成.~ <sup>[②]()</sup>  
