@@ -152,9 +152,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           sudo timedatectl set-timezone "Asia/Shanghai"
-
           python -m pip install --upgrade pip setuptools
-
       - name: Get Issues Info
         if: github.event_name == 'issues'
         id: get-issues
@@ -165,11 +163,9 @@ jobs:
             var issueauth = ${{ toJSON(github.event.issue.user.login) }};
             var issuetitle = ${{ toJSON(github.event.issue.title) }};
             var issuebody = ${{ toJSON(github.event.issue.body) }};
-
             // '<???>': 替换一次; '/<???>/g': 替换全局; '/<???>/gi': 替换全局并忽略大小写; 
             issuetitle = issuetitle.replace(/\u000A/g, "");  // \n 换行符
             issuetitle = issuetitle.replace(/\u000D/g, "");  // \r 回车
-
             issuebody = issuebody.replace(/\u0008/g, "");  // \b Backspace
             issuebody = issuebody.replace(/\u0009/g, "");  // \t Tab
             issuebody = issuebody.replace(/\u000A/g, "");  // \n 换行符
@@ -183,18 +179,15 @@ jobs:
             issuebody = issuebody.replace(/\u2028/g, "");  //    行分隔符
             issuebody = issuebody.replace(/\u2029/g, "");  //    段落分隔符
             issuebody = issuebody.replace(/\uFEFF/g, "");  //    字节顺序标记
-
             // 容错
             issuebody = issuebody.replace(/：/g, ": ");
             issuebody = issuebody.replace(/，/g, ", ");
             issuebody = issuebody.replace(/“/g, "\"");
             issuebody = issuebody.replace(/”/g, "\"");
-
             core.setOutput("issuenumber", JSON.stringify(issuenumber));
             core.setOutput("issueauth", JSON.stringify(issueauth));
             core.setOutput("issuetitle", JSON.stringify(issuetitle));
             core.setOutput("issuebody", JSON.stringify(issuebody));
-
       - name: Set Issues Info
         if: github.event_name == 'issues' && success()
         run: |
@@ -202,25 +195,20 @@ jobs:
           echo issueauth:   "${{ steps.get-issues.outputs.issueauth }}"
           echo issuetitle:  "${{ steps.get-issues.outputs.issuetitle }}"
           echo issuebody:   "${{ steps.get-issues.outputs.issuebody }}"
-
           echo "issuenumber="${{ steps.get-issues.outputs.issuenumber }}"" >> $GITHUB_ENV
           echo "issueauth="${{ steps.get-issues.outputs.issueauth }}"" >> $GITHUB_ENV
           echo "issuetitle="${{ steps.get-issues.outputs.issuetitle }}"" >> $GITHUB_ENV
           echo "issuebody="${{ steps.get-issues.outputs.issuebody }}"" >> $GITHUB_ENV
-
       - name: Get Build Info
         uses: jannekem/run-python-script-action@v1.2
         id: info
         with:
           script: |
             import os, re, json, shutil, string, subprocess
-
             if __name__ == '__main__':
-
                 issues = 'false'
                 iscustom = 'true'
                 errinfo = ''
-
                 platform = 'DS3622xs+'
                 version = '7.1.0-42661'
                 map = ''
@@ -231,13 +219,10 @@ jobs:
                 ext = ''
                 exp = 'pocopico'
                 jun = '0'
-
                 errinfo = ''
-
                 if '${{ github.event_name }}' == 'issues':
                     if '${{ env.issuetitle }}'.lower().startswith('custom'):
                         issues = 'true'
-
                         body = {}
                         try:
                             body = json.loads('${{ env.issuebody }}')
@@ -271,16 +256,12 @@ jobs:
                     ext = '${{ inputs.ext }}'.strip()
                     exp = '${{ inputs.exp }}'.strip()
                     jun = '${{ inputs.jun }}'.strip()
-
-
                 if not platform in ['DS3615xs', 'DS3617xs', 'DS918+', 'DS920+', 'DS3622xs+']:
                     iscustom = 'false'
                     errinfo = 'platform parameter error'
-
                 if not version in ['7.1.1-42951', '7.1.0-42661', '7.0.1-42218', '6.2.4-25556']:
                     iscustom = 'false'
                     errinfo = 'version parameter error'
-
                 if map != '':
                     maps = [x.strip() for x in re.split(',| |\|', map) if x.strip() != '']
                     if len(maps) == 2 and maps[0].isdigit() and all(c in string.hexdigits for c in maps[1]) and len(maps[1]) == 2 * len(maps[0]):
@@ -288,7 +269,6 @@ jobs:
                     else:
                         iscustom = 'false'
                         errinfo = 'map parameter error'
-
                 if dtb != '':
                     url = dtb
                     try:
@@ -324,7 +304,6 @@ jobs:
                                             break
                                     if isfind is True:
                                         break
-
                             if os.path.exists(down) and (down.endswith('dts') or down.endswith('dtb')):
                                 if down.endswith('dts'):
                                     wget.download('https://raw.githubusercontent.com/pocopico/rp-ext/main/redpill-dtb-static/releases/dtc')
@@ -351,11 +330,9 @@ jobs:
                     except Exception as err:
                         iscustom = 'false'
                         errinfo = 'dtb parameter error, {}.'.format(err)
-
                 if sn != '' and not sn.isalnum():
                     iscustom = 'false'
                     errinfo = 'sn parameter error'
-
                 if mac != '':
                     macs = [x.strip() for x in re.split(',| |\|', mac) if x.strip() != '']
                     if len(macs) > 0 or len(macs) <= 8:
@@ -363,7 +340,6 @@ jobs:
                     else:
                         iscustom = 'false'
                         errinfo = 'mac parameter error'
-
                 if usb != '':
                     usbs = [x.strip() for x in re.split(',| |\|', usb) if x.strip() != '']
                     if len(usbs) == 2 \
@@ -373,8 +349,6 @@ jobs:
                     else:
                         iscustom = 'false'
                         errinfo = 'usb parameter error'
-
-
                 if ext != '':
                     try:
                         import wget
@@ -393,19 +367,15 @@ jobs:
                     else:
                         iscustom = 'false'
                         errinfo = 'ext parameter error'
-
                 if not exp in ['pocopico', 'jumkey']:
                     iscustom = 'false'
                     errinfo = 'exp parameter error'
-
                 if not jun in ['0', '1']:
                     iscustom = 'false'
                     errinfo = 'jun parameter error'
-
                 set_output('issues', issues)
                 set_output('iscustom', iscustom)
                 set_output('errinfo', errinfo)
-
                 set_output('platform', platform)
                 set_output('version', version)
                 set_output('map', map)
@@ -416,7 +386,6 @@ jobs:
                 set_output('ext', ext)
                 set_output('exp', exp)
                 set_output('jun', jun)
-
       - name: Echo Build Info
         run: |
           echo issues:    "${{ steps.info.outputs.issues }}"
@@ -432,7 +401,6 @@ jobs:
           echo ext:       "${{ steps.info.outputs.ext }}"
           echo exp:       "${{ steps.info.outputs.exp }}"
           echo jun:       "${{ steps.info.outputs.jun }}"
-
       - name: Add Issues labels
         if: steps.info.outputs.issues == 'true' && steps.info.outputs.iscustom == 'true'
         uses: actions-cool/issues-helper@v3
@@ -484,7 +452,6 @@ jobs:
         with:
           script: |
             import os, json
-
             if __name__ == '__main__':
                 config = {
                     "extra_cmdline": {
@@ -499,7 +466,6 @@ jobs:
                     },
                     "ramdisk_copy": {}
                 }
-
                 dat = []
                 if '${{ steps.info.outputs.sn }}' == '' or '${{ steps.info.outputs.mac }}' == '':
                     try:
@@ -512,12 +478,10 @@ jobs:
                     os.system('sed -i "s|echo.*\$(generateMacAddress)|echo \$(generateMacAddress)|g" serialnumbergen.sh')
                     os.system('sed -i "s|echo.*\$(generateSerial \$1)|echo \$(generateSerial \$1)|g" serialnumbergen.sh')
                     dat = os.popen('bash ./serialnumbergen.sh ${{ steps.info.outputs.platform }}').readlines()
-
                 if '${{ steps.info.outputs.sn }}' != '':
                     config["extra_cmdline"]["sn"] = '${{ steps.info.outputs.sn }}'
                 elif len(dat) == 2:
                     config["extra_cmdline"]["sn"] = dat[1].strip()
-
                 if '${{ steps.info.outputs.mac }}' != '':
                     macs = '${{ steps.info.outputs.mac }}'.split(',')
                     for index, item in enumerate(macs):
@@ -527,21 +491,17 @@ jobs:
                     config["extra_cmdline"]["mac1"] = dat[0].strip().replace(':', '')
                     config["extra_cmdline"]["mac2"] = hex(int(dat[0].strip().replace(':', ''), 16) + 1)[2:].rjust(12,'0').upper()
                     config["extra_cmdline"]["netif_num"] = 2
-
                 if '${{ steps.info.outputs.map }}' != '':
                     maps = '${{ steps.info.outputs.map }}'.split(',')
                     if len(maps) == 2:
                         config["extra_cmdline"]["SataPortMap"] = maps[0]
                         config["extra_cmdline"]["DiskIdxMap"] = maps[1]
-
                 if '${{ steps.info.outputs.usb }}' != '':
                     usbs = '${{ steps.info.outputs.usb }}'.split(',')
                     if len(usbs) == 2:
                         config["extra_cmdline"]["pid"] = usbs[0]
                         config["extra_cmdline"]["vid"] = usbs[1]
-
                 print(json.dumps(config, indent=4))
-
                 with open('user_config.json', 'w', encoding="utf-8") as f:
                     f.write(json.dumps(config, indent=4))
                   
@@ -578,13 +538,10 @@ jobs:
             cd ..
             pwd
           }
-
           sudo apt update
           sudo apt upgrade -y
           sudo apt install curl bspatch jq git -y
-
           # 开始表演
-
           repo=${{ steps.info.outputs.exp }}
           branch=develop
           bArgs=''
@@ -594,16 +551,11 @@ jobs:
               branch=jun
             fi
           fi
-
           git clone -b ${branch} https://github.com/${repo}/redpill-load redpill-load
-
           cp user_config.json redpill-load/user_config.json
-
           cd redpill-load
-
           synoplatform=$(echo ${{ steps.info.outputs.platform }} | sed 's/DS/ds/g; s/+/p/g')       # DS3622xs+ => ds3622xsp
           synoversion=$(echo ${{ steps.info.outputs.version }} | awk -F - '{print $2}')            # 7.0.1-42218 => 42218
-
           # 7.1 解密PAT
           if [[ "${{ steps.info.outputs.version }}" > "7.0.1-42218" ]]; then 
             newpat=${synoplatform}_${synoversion}.pat
@@ -614,13 +566,11 @@ jobs:
             sed -i "s/$(jq -r .os.sha256 ${configfile})/$(sha256sum ./cache/${newpat} | awk '{print $1}')/g" ${configfile}
             jq -r .os.sha256 ${configfile}
           fi
-
           # 添加必备驱动
           #./ext-manager.sh add https://raw.githubusercontent.com/${repo}/redpill-load/${branch}/redpill-boot-wait/rpext-index.json
           ./ext-manager.sh add https://raw.githubusercontent.com/${repo}/redpill-load/${branch}/redpill-acpid/rpext-index.json
           ./ext-manager.sh add https://raw.githubusercontent.com/${repo}/redpill-load/${branch}/redpill-misc/rpext-index.json
           ./ext-manager.sh add https://raw.githubusercontent.com/${repo}/redpill-load/${branch}/redpill-virtio/rpext-index.json
-
           # redpill.ko 方式一 
           extension=$(curl -s --location "https://raw.githubusercontent.com/pocopico/rp-ext/master/redpill/rpext-index.json")
           redpilltgz=$(curl -s --location "$(echo ${extension} | jq -r .releases.${synoplatform}_${synoversion})" | jq -r '.files[] .url')
@@ -628,7 +578,6 @@ jobs:
           wget ${redpilltgz}
           tar zxvf $(echo ${redpilltgz} | awk -F / '{print $NF}') -C ./ 
           mv ./redpill.ko ./ext/rp-lkm/redpill-linux-v$(modinfo redpill.ko | grep vermagic | awk '{print $2}').ko
-
           # # redpill.ko 方式二 
           # git clone -b develop --depth=1 https://github.com/jumkey/redpill-lkm.git
           # # download syno toolkit
@@ -640,11 +589,9 @@ jobs:
           # make LINUX_SRC=../broadwellnk/usr/local/x86_64-pc-linux-gnu/x86_64-pc-linux-gnu/sys-root/usr/lib/modules/DSM-7.0/build dev-v7
           # read -a KVERS <<< "$(sudo modinfo --field=vermagic redpill.ko)" && cp -fv redpill.ko ../redpill-load/ext/rp-lkm/redpill-linux-v${KVERS[0]}.ko || exit 1
           # cd ..
-
           if [ ${{ steps.info.outputs.platform }} == 'DS920+' ]; then
             ./ext-manager.sh add https://raw.githubusercontent.com/pocopico/rp-ext/master/redpill-dtb-static/rpext-index.json
             ./ext-manager.sh _update_platform_exts ${synoplatform}_${synoversion} redpill-dtb-static
-
             if [ -n "${{ steps.info.outputs.dtb }}" ]; then
               dtbuserfile="${{ steps.info.outputs.dtb }}"
               dtbextfile="$(find custom -name model_${synoplatform}.dtb)"
@@ -652,7 +599,6 @@ jobs:
               sudo cp ${dtbuserfile} ${dtbextfile}
             fi
           fi
-
           # 添加扩展驱动
           if [ -n "${{ steps.info.outputs.ext }}" ]; then
             ext=${{ steps.info.outputs.ext }}
@@ -662,13 +608,10 @@ jobs:
               ./ext-manager.sh add "https://raw.githubusercontent.com/pocopico/rp-ext/master/${item}/rpext-index.json"
             done
           fi
-
           # 编译
           # sed -i "s|#!/usr/bin/env bash|#!/usr/bin/env -S bash -x|g" ./build-loader.sh
           sudo ${bArgs} BRP_USER_CFG=user_config.json ./build-loader.sh '${{ steps.info.outputs.platform }}' '${{ steps.info.outputs.version }}'
-
           ls -al ./custom/extensions
-
       - name: Generate release tag
         if: steps.info.outputs.iscustom == 'true' && success()
         id: tag
@@ -682,10 +625,8 @@ jobs:
             echo "👉 "version": "${{ steps.info.outputs.version }}", "jun": "${{ steps.info.outputs.jun }}"  " >> $GITHUB_STEP_SUMMARY
             echo "👉 "ext": "${{ steps.info.outputs.ext }}"  " >> $GITHUB_STEP_SUMMARY
           fi
-
           echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
           echo "::set-output name=repository_name::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')"
-
       - name: Upload to Artifacts
         if: steps.info.outputs.iscustom == 'true' && success()
         uses: actions/upload-artifact@v3
@@ -694,7 +635,6 @@ jobs:
           path: |
             redpill-load/user_config.json
             redpill-load/images/*.img
-
       - name: Generate release tag
         if: steps.info.outputs.iscustom == 'false'
         run: |
@@ -706,7 +646,6 @@ jobs:
           echo "😞 😔 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😢  " >> $GITHUB_STEP_SUMMARY
           echo "您自定义 Redpill 所填写的信息无法解析, 请参考模板并请重新发起定制。  " >> $GITHUB_STEP_SUMMARY
           echo "error info: ${{ steps.info.outputs.errinfo }}  " >> $GITHUB_STEP_SUMMARY
-
       - name: Create Issues Comment
         if: steps.info.outputs.issues == 'true' && steps.info.outputs.iscustom == 'true' && success()
         uses: actions-cool/issues-helper@v3
@@ -748,4 +687,3 @@ jobs:
             Your customized Redpill build failed. Please click the URL below to view the details. Please close this issue by yourself and re create an issue after adjustment to initiate the rebuild.
             > ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           emoji: hooray
-
